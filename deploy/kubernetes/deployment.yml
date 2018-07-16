@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ifabric-api-deployment
+  labels:
+    app: ifabric-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ifabric-api
+  template:
+    metadata:
+      labels:
+        app: ifabric-api
+    spec:
+      containers:
+      - name: ifabric-api
+        image: jittakal/ifabric-api:v0.1
+        env:
+        - name: HBASE_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: ifabric-api-config                 
+              key: hbase.base.url
+        ports:
+        - containerPort: 3004

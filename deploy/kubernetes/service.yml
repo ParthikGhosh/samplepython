@@ -1,0 +1,12 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ifabric-api-service
+spec:
+  selector:
+    app: ifabric-api
+  ports:
+  - protocol: TCP
+    port: 3004
+    targetPort: 3004

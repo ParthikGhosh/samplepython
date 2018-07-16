@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ifabric-api-config
+data:
+  hbase.base.url: 'http://dhdp-management.paas-enablement.net:4200'

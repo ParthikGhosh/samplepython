@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ifabric-api-config
+  namespace: codex-ifabric
+data:
+  hbase.base.url: 'http://dhdp-management.paas-enablement.net:4200'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ifabric-api-deployment
+  namespace: codex-ifabric
+  labels:
+    app: ifabric-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ifabric-api
+  template:
+    metadata:
+      labels:
+        app: ifabric-api
+    spec:
+      containers:
+      - name: ifabric-api
+        image: jittakal/ifabric-api:v0.1
+        env:
+        - name: HBASE_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: ifabric-api-config                 
+              key: hbase.base.url
+        ports:
+        - containerPort: 3004
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ifabric-api-service
+  namespace: codex-ifabric
+spec:
+  selector:
+    app: ifabric-api
+  ports:
+  - protocol: TCP
+    port: 3004
+    targetPort: 3004
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:  
+  name: ifabric-api-route
+  namespace: codex-ifabric
+spec:
+  to:
+    kind: Service
+    name: ifabric-api-service
+    weight: 100
+  wildcardPolicy: None            
